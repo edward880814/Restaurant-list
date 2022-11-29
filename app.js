@@ -39,15 +39,22 @@ app.get("/", (req, res) => {
   //- 取出所有餐廳資料
   return Restaurant.find()
     .lean()
-    .then((restaurant) => res.render("index", { restaurant }));
+    .then((restaurant) => res.render("index", { restaurant }))
+    .catch((err) => console.log(err));
 });
 
-app.get("/restaurants/:restaurant_id", (req, res) => {
+app.get("/restaurants/:_id", (req, res) => {
   //- get restaurant detail
-  const id = req.params.restaurant_id;
-  const restaurant = restaurantList.find((item) => item.id.toString() === id);
-  res.render("show", { restaurant });
+  const { _id } = req.params;
+  //- 透過id查詢導向對應餐廳資料，將查詢結果傳回給show頁面
+  Restaurant.findById(_id)
+    .lean()
+    .then((restaurant) => res.render("show", { restaurant }))
+    .catch((err) => console.log(err));
 });
+
+//- 導向新增餐廳頁面
+app.get("/restaurants/new", (req, res) => {});
 
 //- search for certain restaurants
 app.get("/search", (req, res) => {

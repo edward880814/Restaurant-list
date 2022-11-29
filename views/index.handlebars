@@ -23,6 +23,7 @@
           </div>
         </div>
       </form>
+      <a href="/restaurants/new" class="btn btn-primary">新增餐廳</a>
     </div>
   </div>
 </div>
@@ -34,29 +35,45 @@
       <div class="row row-cols-sm-3">
         {{! show all restaurant by loop }}
         {{#each restaurant}}
-          <a href="/restaurants/{{this.id}}" class="text-secondary">
-            <div class="card mb-3">
-              <img
-                class="card-img-top"
-                src="{{this.image}}"
-                alt="{{this.name}}"
-              />
-              <div class="card-body p-3">
-                <h6 class="card-title mb-1">{{this.name}}</h6>
+          <div class="col">
+            <a href="/restaurants/{{this._id}}" class="text-secondary">
+              <div class="card">
+                <img
+                  class="card-img-top"
+                  src="{{this.image}}"
+                  alt="{{this.name}}"
+                />
+                <div class="card-body p-3">
+                  <h6 class="card-title mb-1">{{this.name}}</h6>
 
-                <div class="restaurant-category mb-1">
-                  <i class="fas fa-utensils pr-2"></i>
-                  {{this.category}}
+                  <div class="restaurant-category mb-1">
+                    <i class="fas fa-utensils pr-2"></i>
+                    {{this.category}}
+                  </div>
+
+                  <span class="badge badge-pill bg-danger font-weight-normal">
+                    {{this.rating}}
+                    <i class="fas fa-star fa-xs"></i>
+                  </span>
+
                 </div>
-
-                <span class="badge badge-pill bg-danger font-weight-normal">
-                  {{this.rating}}
-                  <i class="fas fa-star fa-xs"></i>
-                </span>
-
               </div>
-            </div>
-          </a>
+              <div
+                class="link-container mt-2 mb-3 d-flex justify-content-end align-items-center"
+              >
+                <a href="/restaurants/{{this._id}}/edit">Edit</a>
+                <a href="/restaurants/{{this._id}}" class="ms-3">Detail</a>
+                <form
+                  action="/restaurants/{{this._id}}/delete"
+                  method="POST"
+                  class="ms-3 my-0 d-flex align-items-center"
+                >
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+              </div>
+            </a>
+          </div>
+
         {{/each}}
       </div>
     </div>
