@@ -4,8 +4,28 @@ const app = express();
 const port = 3000;
 // - require express-handlebars
 const exphbs = require("express-handlebars");
-//- get retaurant from json file
-const restaurantList = require("./restaurant.json").results;
+//- require Restaurant model
+const Restaurant = require("./models/restaurant");
+//! require mongoose
+const mongoose = require("mongoose");
+
+//! connect to db
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config(); //- 僅在非正式環境時使用dotenv
+}
+
+mongoose.connect(process.env.MONGOOSE_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const db = mongoose.connection;
+db.on("error", () => {
+  console.log("MongoDB connect error!!!");
+});
+db.once("open", () => {
+  console.log("MongoDB connected successfully!!!");
+});
 
 //! template engine setting
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
@@ -16,7 +36,10 @@ app.use(express.static("public"));
 
 //! set server route
 app.get("/", (req, res) => {
-  res.render("index", { restaurant: restaurantList });
+  //- 取出所有餐廳資料
+  return Restaurant.find()
+    .lean()
+    .then((restaurant) => res.render("index", { restaurant }));
 });
 
 app.get("/restaurants/:restaurant_id", (req, res) => {
