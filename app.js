@@ -8,6 +8,10 @@ const exphbs = require("express-handlebars");
 const Restaurant = require("./models/restaurant");
 //! require mongoose
 const mongoose = require("mongoose");
+//- require bodyparser
+const bodyParser = require("body-parser");
+//- require checkFormInput
+const checkFormInput = require("./models/checkFormInput");
 
 //! connect to db
 if (process.env.NODE_ENV !== "production") {
@@ -33,6 +37,8 @@ app.set("view engine", "handlebars");
 
 //! load static files
 app.use(express.static("public"));
+//! body parser middleware
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //! set server route
 app.get("/", (req, res) => {
@@ -43,18 +49,57 @@ app.get("/", (req, res) => {
     .catch((err) => console.log(err));
 });
 
+//- 導向新增餐廳頁面
+app.get("/restaurants/new", (req, res) => {
+  return res.render("new");
+});
+//- 接收新增餐廳請求
+app.post("/restaurants", (req, res) => {
+  const restaurant = req.body;
+  const {
+    name,
+    name_en,
+    category,
+    image,
+    location,
+    phone,
+    google_map,
+    rating,
+    description,
+  } = req.body;
+  //- check form input
+  const errMessage = checkFormInput(restaurant);
+  if (errMessage) {
+    return res.render("new", {
+      errMessage,
+      restaurant,
+    });
+  }
+  //- create new restaurant in db and render
+  return Restaurant.create({
+    name,
+    name_en,
+    category,
+    image,
+    location,
+    phone,
+    google_map,
+    rating,
+    description,
+  })
+    .then(() => res.redirect("/"))
+    .catch((err) => console.log(err));
+});
+
 app.get("/restaurants/:_id", (req, res) => {
   //- get restaurant detail
   const { _id } = req.params;
   //- 透過id查詢導向對應餐廳資料，將查詢結果傳回給show頁面
-  Restaurant.findById(_id)
+  return Restaurant.findById(_id)
     .lean()
     .then((restaurant) => res.render("show", { restaurant }))
     .catch((err) => console.log(err));
 });
-
-//- 導向新增餐廳頁面
-app.get("/restaurants/new", (req, res) => {});
 
 //- search for certain restaurants
 app.get("/search", (req, res) => {
