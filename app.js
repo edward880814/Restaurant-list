@@ -75,7 +75,7 @@ app.post("/restaurants", (req, res) => {
       restaurant,
     });
   }
-  //- create new restaurant in db and redirect to inde page
+  //- create new restaurant in db and redirect to index page
   return Restaurant.create({
     name,
     name_en,
@@ -92,7 +92,6 @@ app.post("/restaurants", (req, res) => {
 });
 
 app.get("/restaurants/:_id", (req, res) => {
-  //- get restaurant detail
   const { _id } = req.params;
   //- 透過id查詢導向對應餐廳資料，將查詢結果傳回給show頁面
   return Restaurant.findById(_id)
@@ -101,21 +100,20 @@ app.get("/restaurants/:_id", (req, res) => {
     .catch((err) => console.log(err));
 });
 
-//- search for certain restaurants
+//! search for certain restaurants
 app.get("/search", (req, res) => {
   const keyword = req.query.keyword.toLowerCase().trim();
   //- 尋找包含keyword的餐廳
 
-  //- searchby rating (若輸入數字)
+  //- search by rating (若輸入數字)
   if (!isNaN(Number(keyword))) {
     return Restaurant.find({ rating: { $gte: Number(keyword) } })
       .lean()
       .then((restaurant) => {
         if (!restaurant.length) {
           return res.render("error", { keyword });
-        } else {
-          return res.render("index", { restaurant, keyword });
         }
+        return res.render("index", { restaurant, keyword });
       })
       .catch((err) => console.log(err));
   }
@@ -132,32 +130,65 @@ app.get("/search", (req, res) => {
     .then((restaurant) => {
       if (!restaurant.length) {
         return res.render("error", { keyword });
-      } else {
-        return res.render("index", { restaurant, keyword });
       }
+      return res.render("index", { restaurant, keyword });
     })
     .catch((err) => console.log(err));
-  // let restaurant = restaurantList.filter(
-  //   (item) =>
-  //     item.name.toLowerCase().trim().includes(keyword) ||
-  //     item.name_en.toLowerCase().trim().includes(keyword) ||
-  //     item.category.trim().includes(keyword)
-  // );
-  // //! search by rating
-  // if (!isNaN(Number(keyword))) {
-  //   restaurant = restaurantList.filter(
-  //     (item) => item.rating >= Number(keyword)
-  //   );
-  // }
-  // //! 若找不到restaurant顯示error頁面
-  // if (!restaurant.length) {
-  //   res.render("error");
-  // } else {
-  //   res.render("index", { restaurant, keyword });
-  // }
 });
 
-//! route for not found
+//- 導向修改頁面
+app.get("/restaurants/:_id/edit", (req, res) => {
+  const { _id } = req.params;
+  return Restaurant.findById(_id)
+    .lean()
+    .then((restaurant) => {
+      return res.render("edit", { restaurant, _id });
+    })
+    .catch((err) => console.log(err));
+});
+//- 接收修改請求
+app.post("/restaurants/:_id/edit", (req, res) => {
+  const { _id } = req.params;
+  const restaurant = req.body;
+  const {
+    name,
+    name_en,
+    category,
+    image,
+    location,
+    phone,
+    google_map,
+    rating,
+    description,
+  } = req.body;
+  //- check form input
+  const errMessage = checkFormInput(restaurant);
+  if (errMessage) {
+    return res.render("edit", {
+      errMessage,
+      restaurant,
+      _id,
+    });
+  }
+  return Restaurant.findById(_id)
+    .then((restaurant) => {
+      //- 取得資料後修改並儲存
+      restaurant.name = name;
+      restaurant.name_en = name_en;
+      restaurant.category = category;
+      restaurant.image = image;
+      restaurant.location = location;
+      restaurant.phone = phone;
+      restaurant.google_map = google_map;
+      restaurant.rating = rating;
+      restaurant.description = description;
+      return restaurant.save();
+    })
+    .then(() => res.redirect("/"))
+    .catch((err) => console.log(err));
+});
+
+//! route for not found (undefined route)
 app.get("*", (req, res) => {
   res.render("error");
 });

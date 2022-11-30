@@ -10,12 +10,12 @@ function checkFormInput(data) {
     `;
   }
   //- 判斷電話格式
-  if (!data.phone.includes("-")) {
+  if (!data.phone.includes(" ")) {
     errMessage += `
       <code>Format of Tel is wrong!</code>
     `;
   } else {
-    const phoneNumArr = data.phone.split("-");
+    const phoneNumArr = data.phone.split(" ");
     for (let i = 0; i < phoneNumArr.length; i += 1) {
       if (isNaN(Number(phoneNumArr[i]))) {
         errMessage += `

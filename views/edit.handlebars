@@ -1,9 +1,9 @@
-{{! add new restaurant page }}
-<h1 class="mb-1 restaurant-show-title">Add new restaurant</h1>
+{{! edit page }}
+<h1 class="mb-1 restaurant-show-title">Edit information</h1>
 <div class="row">
   <div class="col col-sm-6 mx-auto">
     <form
-      action="/restaurants"
+      action="/restaurants/{{_id}}/edit"
       id="new-form"
       class="needs-validation fw-bolder"
       method="POST"
@@ -191,7 +191,7 @@
         type="submit"
         class="btn btn-primary"
         id="submitButton"
-      >Add</button>
+      >Save</button>
       <a href="/" class="ms-3 btn btn-success"><i class="fa-solid fa-reply"></i>
         Home</a>
     </form>
