@@ -23,7 +23,7 @@ const RestaurantSchema = new Schema({
   rating: {
     type: Number,
     required: true,
-    min: [0, "評分最低就是0分，不能再低了!!"],
+    min: [0, "評分最低是0分，不能再低了!!"],
     max: [5.0, "評分最高為5.0，不能再高了!!"],
   },
   location: {

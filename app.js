@@ -75,7 +75,7 @@ app.post("/restaurants", (req, res) => {
       restaurant,
     });
   }
-  //- create new restaurant in db and render
+  //- create new restaurant in db and redirect to inde page
   return Restaurant.create({
     name,
     name_en,
@@ -104,24 +104,57 @@ app.get("/restaurants/:_id", (req, res) => {
 //- search for certain restaurants
 app.get("/search", (req, res) => {
   const keyword = req.query.keyword.toLowerCase().trim();
-  let restaurant = restaurantList.filter(
-    (item) =>
-      item.name.toLowerCase().trim().includes(keyword) ||
-      item.name_en.toLowerCase().trim().includes(keyword) ||
-      item.category.trim().includes(keyword)
-  );
-  //! search by rating
+  //- 尋找包含keyword的餐廳
+
+  //- searchby rating (若輸入數字)
   if (!isNaN(Number(keyword))) {
-    restaurant = restaurantList.filter(
-      (item) => item.rating >= Number(keyword)
-    );
+    return Restaurant.find({ rating: { $gte: Number(keyword) } })
+      .lean()
+      .then((restaurant) => {
+        if (!restaurant.length) {
+          return res.render("error", { keyword });
+        } else {
+          return res.render("index", { restaurant, keyword });
+        }
+      })
+      .catch((err) => console.log(err));
   }
-  //! 若找不到restaurant顯示error頁面
-  if (!restaurant.length) {
-    res.render("error");
-  } else {
-    res.render("index", { restaurant, keyword });
-  }
+
+  //- 如果輸入文字
+  return Restaurant.find({
+    $or: [
+      { name: { $regex: keyword, $options: "i" } },
+      { name_en: { $regex: keyword, $options: "i" } },
+      { category: { $regex: keyword, $options: "i" } },
+    ],
+  })
+    .lean()
+    .then((restaurant) => {
+      if (!restaurant.length) {
+        return res.render("error", { keyword });
+      } else {
+        return res.render("index", { restaurant, keyword });
+      }
+    })
+    .catch((err) => console.log(err));
+  // let restaurant = restaurantList.filter(
+  //   (item) =>
+  //     item.name.toLowerCase().trim().includes(keyword) ||
+  //     item.name_en.toLowerCase().trim().includes(keyword) ||
+  //     item.category.trim().includes(keyword)
+  // );
+  // //! search by rating
+  // if (!isNaN(Number(keyword))) {
+  //   restaurant = restaurantList.filter(
+  //     (item) => item.rating >= Number(keyword)
+  //   );
+  // }
+  // //! 若找不到restaurant顯示error頁面
+  // if (!restaurant.length) {
+  //   res.render("error");
+  // } else {
+  //   res.render("index", { restaurant, keyword });
+  // }
 });
 
 //! route for not found
