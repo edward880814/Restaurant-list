@@ -12,6 +12,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 //- require checkFormInput
 const checkFormInput = require("./models/checkFormInput");
+const restaurant = require("./models/restaurant");
 
 //! connect to db
 if (process.env.NODE_ENV !== "production") {
@@ -186,6 +187,18 @@ app.post("/restaurants/:_id/edit", (req, res) => {
     })
     .then(() => res.redirect("/"))
     .catch((err) => console.log(err));
+});
+
+//- 接收delete請求
+app.post("/restaurants/:_id/delete", (req, res) => {
+  const { _id } = req.params;
+  return (
+    Restaurant.findById(_id)
+      //- 找到對應資料並刪除，重新導向
+      .then((restaurant) => restaurant.remove())
+      .then(() => res.redirect("/"))
+      .catch((err) => console.log(err))
+  );
 });
 
 //! route for not found (undefined route)

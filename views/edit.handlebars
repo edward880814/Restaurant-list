@@ -192,9 +192,15 @@
         class="btn btn-primary"
         id="submitButton"
       >Save</button>
-      <a href="/" class="ms-3 btn btn-success"><i class="fa-solid fa-reply"></i>
-        Home</a>
     </form>
-
+    <form
+      action="/restaurants/{{_id}}/delete"
+      method="POST"
+      class="my-0 d-flex align-items-center"
+    >
+      <a href="/" class="btn btn-success"><i class="fa-solid fa-reply"></i>
+        Home</a>
+      <button type="submit" class="ms-2 btn btn-danger">Delete</button>
+    </form>
   </div>
 </div>
