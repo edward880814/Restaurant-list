@@ -61,14 +61,23 @@
               <div
                 class="link-container mt-2 mb-3 d-flex justify-content-end align-items-center"
               >
-                <a href="/restaurants/{{this._id}}/edit">Edit</a>
-                <a href="/restaurants/{{this._id}}" class="ms-2">Detail</a>
+                <a
+                  href="/restaurants/{{this._id}}/edit"
+                  class="btn btn-secondary btn-sm"
+                >Edit</a>
+                <a
+                  href="/restaurants/{{this._id}}"
+                  class="btn btn-primary btn-sm ms-2"
+                >Detail</a>
                 <form
                   action="/restaurants/{{this._id}}/delete"
                   method="POST"
                   class="ms-2 my-0 d-flex align-items-center"
                 >
-                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <button
+                    type="submit"
+                    class="btn btn-danger btn-sm"
+                  >Delete</button>
                 </form>
               </div>
             </a>

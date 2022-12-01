@@ -12,7 +12,6 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 //- require checkFormInput
 const checkFormInput = require("./models/checkFormInput");
-const restaurant = require("./models/restaurant");
 
 //! connect to db
 if (process.env.NODE_ENV !== "production") {
@@ -151,17 +150,6 @@ app.get("/restaurants/:_id/edit", (req, res) => {
 app.post("/restaurants/:_id/edit", (req, res) => {
   const { _id } = req.params;
   const restaurant = req.body;
-  const {
-    name,
-    name_en,
-    category,
-    image,
-    location,
-    phone,
-    google_map,
-    rating,
-    description,
-  } = req.body;
   //- check form input
   const errMessage = checkFormInput(restaurant);
   if (errMessage) {
@@ -174,15 +162,9 @@ app.post("/restaurants/:_id/edit", (req, res) => {
   return Restaurant.findById(_id)
     .then((restaurant) => {
       //- 取得資料後修改並儲存
-      restaurant.name = name;
-      restaurant.name_en = name_en;
-      restaurant.category = category;
-      restaurant.image = image;
-      restaurant.location = location;
-      restaurant.phone = phone;
-      restaurant.google_map = google_map;
-      restaurant.rating = rating;
-      restaurant.description = description;
+      for (const prop in req.body) {
+        restaurant[prop] = req.body[prop]
+      }
       return restaurant.save();
     })
     .then(() => res.redirect("/"))
