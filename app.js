@@ -163,11 +163,11 @@ app.post("/restaurants/:_id/edit", (req, res) => {
     .then((restaurant) => {
       //- 取得資料後修改並儲存
       for (const prop in req.body) {
-        restaurant[prop] = req.body[prop]
+        restaurant[prop] = req.body[prop];
       }
       return restaurant.save();
     })
-    .then(() => res.redirect("/"))
+    .then(() => res.redirect(`/restaurants/${_id}`))
     .catch((err) => console.log(err));
 });
 
