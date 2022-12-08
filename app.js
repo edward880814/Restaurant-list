@@ -45,7 +45,7 @@ app.get("/", (req, res) => {
   //- 取出所有餐廳資料
   return Restaurant.find()
     .lean()
-    .then((restaurant) => res.render("index", { restaurant }))
+    .then((restaurants) => res.render("index", { restaurants }))
     .catch((err) => console.log(err));
 });
 
@@ -109,11 +109,11 @@ app.get("/search", (req, res) => {
   if (!isNaN(Number(keyword))) {
     return Restaurant.find({ rating: { $gte: Number(keyword) } })
       .lean()
-      .then((restaurant) => {
-        if (!restaurant.length) {
+      .then((restaurants) => {
+        if (!restaurants.length) {
           return res.render("error", { keyword });
         }
-        return res.render("index", { restaurant, keyword });
+        return res.render("index", { restaurants, keyword });
       })
       .catch((err) => console.log(err));
   }
@@ -127,11 +127,11 @@ app.get("/search", (req, res) => {
     ],
   })
     .lean()
-    .then((restaurant) => {
+    .then((restaurants) => {
       if (!restaurant.length) {
         return res.render("error", { keyword });
       }
-      return res.render("index", { restaurant, keyword });
+      return res.render("index", { restaurants, keyword });
     })
     .catch((err) => console.log(err));
 });
