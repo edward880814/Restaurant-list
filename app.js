@@ -128,7 +128,7 @@ app.get("/search", (req, res) => {
   })
     .lean()
     .then((restaurants) => {
-      if (!restaurant.length) {
+      if (!restaurants.length) {
         return res.render("error", { keyword });
       }
       return res.render("index", { restaurants, keyword });
