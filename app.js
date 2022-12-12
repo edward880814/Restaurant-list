@@ -55,11 +55,12 @@ app.get("/restaurants/new", (req, res) => {
   return Restaurant.find({}, { _id: 0, category: 1 })
     .lean()
     .then((categoriesInDB) => {
-      const categoryArr = categoriesInDB.map((category) => category.category);
-      //- 移除重複項目
-      const categories = categoryArr.filter(
-        (category, index) => categoryArr.indexOf(category) === index
-      );
+      const categories = categoriesInDB
+        .map((category) => category.category)
+        //- 移除重複項目
+        .filter(
+          (category, index, mappedArr) => mappedArr.indexOf(category) === index
+        );
       return res.render("new", { categories });
     })
     .catch((err) => console.log(err));
@@ -156,13 +157,12 @@ app.get("/restaurants/:_id/edit", (req, res) => {
       return Restaurant.find({}, { _id: 0, category: 1 })
         .lean()
         .then((categoriesInDB) => {
-          const categoryArr = categoriesInDB.map(
-            (category) => category.category
-          );
-          //- 移除重複項目
-          const categories = categoryArr.filter(
-            (category, index) => categoryArr.indexOf(category) === index
-          );
+          const categories = categoriesInDB
+            .map((category) => category.category)
+            .filter(
+              (category, index, mappedArr) =>
+                mappedArr.indexOf(category) === index
+            );
           return res.render("edit", { restaurant, _id, categories });
         });
     })
