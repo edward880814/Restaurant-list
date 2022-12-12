@@ -2,7 +2,7 @@
 
 A simple web application for managing your favorite restaurants
 
-![Previrew](https://github.com/yhhuangfrank/Restaurant-project-ver2/blob/main/public/image/preview%20image.png)
+![Previrew](https://github.com/yhhuangfrank/Restaurant-project-ver2/blob/main/public/image/preview-image.png)
 
 
 ## Features
