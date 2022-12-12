@@ -51,7 +51,18 @@ app.get("/", (req, res) => {
 
 //- 導向新增餐廳頁面
 app.get("/restaurants/new", (req, res) => {
-  return res.render("new");
+  //- 查找目前已有種類
+  return Restaurant.find({}, { _id: 0, category: 1 })
+    .lean()
+    .then((categoriesInDB) => {
+      const categoryArr = categoriesInDB.map((category) => category.category);
+      //- 移除重複項目
+      const categories = categoryArr.filter(
+        (category, index) => categoryArr.indexOf(category) === index
+      );
+      return res.render("new", { categories });
+    })
+    .catch((err) => console.log(err));
 });
 //- 接收新增餐廳請求
 app.post("/restaurants", (req, res) => {
@@ -142,7 +153,18 @@ app.get("/restaurants/:_id/edit", (req, res) => {
   return Restaurant.findById(_id)
     .lean()
     .then((restaurant) => {
-      return res.render("edit", { restaurant, _id });
+      return Restaurant.find({}, { _id: 0, category: 1 })
+        .lean()
+        .then((categoriesInDB) => {
+          const categoryArr = categoriesInDB.map(
+            (category) => category.category
+          );
+          //- 移除重複項目
+          const categories = categoryArr.filter(
+            (category, index) => categoryArr.indexOf(category) === index
+          );
+          return res.render("edit", { restaurant, _id, categories });
+        });
     })
     .catch((err) => console.log(err));
 });
