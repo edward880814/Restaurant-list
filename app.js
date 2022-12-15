@@ -8,31 +8,15 @@ const bodyParser = require("body-parser");
 const methodOverride = require("method-override")
 //- require Restaurant model
 const Restaurant = require("./models/restaurant");
-//! require mongoose
-const mongoose = require("mongoose");
+//! connect to db
+require("./config/mongoose")
 
 //- require checkFormInput
 const checkFormInput = require("./models/checkFormInput");
 
 const app = express();
 const port = 3000;
-//! connect to db
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config(); //- 僅在非正式環境時使用dotenv
-}
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-const db = mongoose.connection;
-db.on("error", () => {
-  console.log("MongoDB connect error!!!");
-});
-db.once("open", () => {
-  console.log("MongoDB connected successfully!!!");
-});
 
 //! template engine setting
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
