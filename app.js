@@ -5,18 +5,14 @@ const exphbs = require("express-handlebars");
 //- require bodyparser
 const bodyParser = require("body-parser");
 //- require method-override
-const methodOverride = require("method-override")
-//- require Restaurant model
-const Restaurant = require("./models/restaurant");
+const methodOverride = require("method-override");
+//! require index router
+const router = require("./routes/index");
 //! connect to db
-require("./config/mongoose")
-
-//- require checkFormInput
-const checkFormInput = require("./models/checkFormInput");
+require("./config/mongoose");
 
 const app = express();
 const port = 3000;
-
 
 //! template engine setting
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
@@ -27,177 +23,10 @@ app.use(express.static("public"));
 //! body parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 //! method-override middleware
-app.use(methodOverride("_method"))
+app.use(methodOverride("_method"));
+//! router middleware
+app.use(router)
 
-//! set server route
-app.get("/", (req, res) => {
-  //- 取出所有餐廳資料
-  return Restaurant.find()
-    .lean()
-    .then((restaurants) => res.render("index", { restaurants }))
-    .catch((err) => console.log(err));
-});
-
-//- 導向新增餐廳頁面
-app.get("/restaurants/new", (req, res) => {
-  //- 查找目前已有種類
-  return Restaurant.find({}, { _id: 0, category: 1 })
-    .lean()
-    .then((categoriesInDB) => {
-      const categories = categoriesInDB
-        .map((category) => category.category)
-        //- 移除重複項目
-        .filter(
-          (category, index, mappedArr) => mappedArr.indexOf(category) === index
-        );
-      return res.render("new", { categories });
-    })
-    .catch((err) => console.log(err));
-});
-//- 接收新增餐廳請求
-app.post("/restaurants", (req, res) => {
-  const restaurant = req.body;
-  const {
-    name,
-    name_en,
-    category,
-    image,
-    location,
-    phone,
-    google_map,
-    rating,
-    description,
-  } = req.body;
-  //- check form input
-  const errMessage = checkFormInput(restaurant);
-  if (errMessage) {
-    return res.render("new", {
-      errMessage,
-      restaurant,
-    });
-  }
-  //- create new restaurant in db and redirect to index page
-  return Restaurant.create({
-    name,
-    name_en,
-    category,
-    image,
-    location,
-    phone,
-    google_map,
-    rating,
-    description,
-  })
-    .then(() => res.redirect("/"))
-    .catch((err) => console.log(err));
-});
-
-app.get("/restaurants/:_id", (req, res) => {
-  const { _id } = req.params;
-  //- 透過id查詢導向對應餐廳資料，將查詢結果傳回給show頁面
-  return Restaurant.findById(_id)
-    .lean()
-    .then((restaurant) => res.render("show", { restaurant }))
-    .catch((err) => console.log(err));
-});
-
-//! search for certain restaurants
-app.get("/search", (req, res) => {
-  const keyword = req.query.keyword.toLowerCase().trim();
-  //- 尋找包含keyword的餐廳
-
-  //- search by rating (若輸入數字)
-  if (!isNaN(Number(keyword))) {
-    return Restaurant.find({ rating: { $gte: Number(keyword) } })
-      .lean()
-      .then((restaurants) => {
-        if (!restaurants.length) {
-          return res.render("error", { keyword });
-        }
-        return res.render("index", { restaurants, keyword });
-      })
-      .catch((err) => console.log(err));
-  }
-
-  //- 如果輸入文字
-  return Restaurant.find({
-    $or: [
-      { name: { $regex: keyword, $options: "i" } },
-      { name_en: { $regex: keyword, $options: "i" } },
-      { category: { $regex: keyword, $options: "i" } },
-    ],
-  })
-    .lean()
-    .then((restaurants) => {
-      if (!restaurants.length) {
-        return res.render("error", { keyword });
-      }
-      return res.render("index", { restaurants, keyword });
-    })
-    .catch((err) => console.log(err));
-});
-
-//- 導向修改頁面
-app.get("/restaurants/:_id/edit", (req, res) => {
-  const { _id } = req.params;
-  return Restaurant.findById(_id)
-    .lean()
-    .then((restaurant) => {
-      return Restaurant.find({}, { _id: 0, category: 1 })
-        .lean()
-        .then((categoriesInDB) => {
-          const categories = categoriesInDB
-            .map((category) => category.category)
-            .filter(
-              (category, index, mappedArr) =>
-                mappedArr.indexOf(category) === index
-            );
-          return res.render("edit", { restaurant, _id, categories });
-        });
-    })
-    .catch((err) => console.log(err));
-});
-//- 接收修改請求(使用method-override修改為put請求)
-app.put("/restaurants/:_id", (req, res) => {
-  const { _id } = req.params;
-  const restaurant = req.body;
-  //- check form input
-  const errMessage = checkFormInput(restaurant);
-  if (errMessage) {
-    return res.render("edit", {
-      errMessage,
-      restaurant,
-      _id,
-    });
-  }
-  return Restaurant.findById(_id)
-    .then((restaurant) => {
-      //- 取得資料後修改並儲存
-      for (const prop in req.body) {
-        restaurant[prop] = req.body[prop];
-      }
-      return restaurant.save();
-    })
-    .then(() => res.redirect(`/restaurants/${_id}`))
-    .catch((err) => console.log(err));
-});
-
-//- 接收delete請求(使用method-override修改為delete請求)
-app.delete("/restaurants/:_id", (req, res) => {
-  const { _id } = req.params;
-  return (
-    Restaurant.findById(_id)
-      //- 找到對應資料並刪除，重新導向
-      .then((restaurant) => restaurant.remove())
-      .then(() => res.redirect("/"))
-      .catch((err) => console.log(err))
-  );
-});
-
-//! route for not found (undefined route)
-app.get("*", (req, res) => {
-  res.render("error");
-});
 
 //! listen to server
 app.listen(port, () => {
