@@ -1,18 +1,21 @@
 //! require express
 const express = require("express");
-const app = express();
-const port = 3000;
 // - require express-handlebars
 const exphbs = require("express-handlebars");
+//- require bodyparser
+const bodyParser = require("body-parser");
+//- require method-override
+const methodOverride = require("method-override")
 //- require Restaurant model
 const Restaurant = require("./models/restaurant");
 //! require mongoose
 const mongoose = require("mongoose");
-//- require bodyparser
-const bodyParser = require("body-parser");
+
 //- require checkFormInput
 const checkFormInput = require("./models/checkFormInput");
 
+const app = express();
+const port = 3000;
 //! connect to db
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config(); //- 僅在非正式環境時使用dotenv
@@ -39,6 +42,8 @@ app.set("view engine", "handlebars");
 app.use(express.static("public"));
 //! body parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
+//! method-override middleware
+app.use(methodOverride("_method"))
 
 //! set server route
 app.get("/", (req, res) => {
@@ -168,8 +173,8 @@ app.get("/restaurants/:_id/edit", (req, res) => {
     })
     .catch((err) => console.log(err));
 });
-//- 接收修改請求
-app.post("/restaurants/:_id/edit", (req, res) => {
+//- 接收修改請求(使用method-override修改為put請求)
+app.put("/restaurants/:_id", (req, res) => {
   const { _id } = req.params;
   const restaurant = req.body;
   //- check form input
@@ -193,8 +198,8 @@ app.post("/restaurants/:_id/edit", (req, res) => {
     .catch((err) => console.log(err));
 });
 
-//- 接收delete請求
-app.post("/restaurants/:_id/delete", (req, res) => {
+//- 接收delete請求(使用method-override修改為delete請求)
+app.delete("/restaurants/:_id", (req, res) => {
   const { _id } = req.params;
   return (
     Restaurant.findById(_id)
