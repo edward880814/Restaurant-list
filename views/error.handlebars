@@ -5,22 +5,36 @@
 <div class="container search-bar">
   <div class="search-bar-outer">
     <div class="search-bar-inner">
+      <h4 class="mb-2">尋找餐廳：</h4>
       <form action="/search">
-        <h4 class="mb-2">尋找餐廳：</h4>
-        <div class="input-group">
-          <input
-            type="text"
-            name="keyword"
-            class="form-control"
-            placeholder="輸入餐廳、分類或評分"
-            aria-label="Restaurant Name..."
-            value="{{keyword}}"
-            aria-describedby="search-button"
-          />
-          <div class="input-group-append">
-            <button class="btn btn-major" type="submit" id="search-button"><i
-                class="fas fa-search"
-              ></i></button>
+        <div class="d-flex flex-column flex-sm-row">
+          <div class="input-group">
+            <input
+              type="text"
+              name="keyword"
+              class="form-control"
+              placeholder="輸入餐廳、分類或評分"
+              aria-label="Restaurant Name..."
+              value="{{keyword}}"
+              aria-describedby="search-button"
+            />
+          </div>
+          <div class="input-group mt-2 mt-sm-0 ms-sm-2">
+            <select name="sort" id="sort" class="form-select">
+              <option value="asc" {{isLastSelect lastSort "asc"}}>A -> Z</option>
+              <option value="desc" {{isLastSelect lastSort "desc"}}>Z -> A</option>
+              <option
+                value="category"
+                {{isLastSelect lastSort "category"}}
+              >類別</option>
+              <option
+                value="location"
+                {{isLastSelect lastSort "location"}}
+              >地址</option>
+            </select>
+            <button class="btn btn-major" type="submit" id="search-button">
+              <i class="fas fa-search"></i>
+            </button>
           </div>
         </div>
       </form>

@@ -6,17 +6,23 @@ const Restaurant = require("../../models/restaurant");
 //! search for certain restaurants
 router.get("/", (req, res) => {
   const keyword = req.query.keyword.toLowerCase().trim();
-  //- 尋找包含keyword的餐廳
-
+  let { sort } = req.query;
+  const lastSort = sort;
+  if (sort === "asc" || sort === "desc") {
+    //- 如果是升降冪，使用英文字排序
+    sort = { name_en: sort };
+  }
   //- search by rating (若輸入數字)
   if (!isNaN(Number(keyword))) {
     return Restaurant.find({ rating: { $gte: Number(keyword) } })
       .lean()
+      .collation({ locale: "en" }) //- 使用英文字母排序
+      .sort(sort)
       .then((restaurants) => {
         if (!restaurants.length) {
-          return res.render("error", { keyword });
+          return res.render("error", { keyword, lastSort });
         }
-        return res.render("index", { restaurants, keyword });
+        return res.render("index", { restaurants, keyword, lastSort });
       })
       .catch((err) => console.log(err));
   }
@@ -30,11 +36,13 @@ router.get("/", (req, res) => {
     ],
   })
     .lean()
+    .collation({ locale: "en" }) //- 使用英文字母排序
+    .sort(sort)
     .then((restaurants) => {
       if (!restaurants.length) {
-        return res.render("error", { keyword });
+        return res.render("error", { keyword, lastSort });
       }
-      return res.render("index", { restaurants, keyword });
+      return res.render("index", { restaurants, keyword, lastSort });
     })
     .catch((err) => console.log(err));
 });
