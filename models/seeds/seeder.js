@@ -1,5 +1,4 @@
-//- 建立mongoose 連線與引入Restaurant model
-const mongoose = require("mongoose");
+//- 引入Restaurant model
 const Restaurant = require("../restaurant");
 //- require ressttaurant json file
 const restaurantSeed = require("../../restaurant.json").results;
