@@ -4,7 +4,7 @@ const router = require("express").Router();
 const Restaurant = require("../../models/restaurant");
 
 //! search for certain restaurants
-router.get("/search", (req, res) => {
+router.get("/", (req, res) => {
   const keyword = req.query.keyword.toLowerCase().trim();
   //- 尋找包含keyword的餐廳
 
