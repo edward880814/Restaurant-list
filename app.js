@@ -18,7 +18,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config(); //- 僅在非正式環境時使用dotenv
 }
 
-mongoose.connect(process.env.MONGOOSE_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

@@ -10,7 +10,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 //- 連線database
-mongoose.connect(process.env.MONGOOSE_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
