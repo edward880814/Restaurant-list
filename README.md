@@ -13,6 +13,7 @@ A simple web application for managing your favorite restaurants
 - 編輯餐廳
 - 刪除餐廳
 - 搜尋餐廳名稱(英文名稱)、類別、以及評分(顯示高於輸入值餐廳)
+- 按照字母、種類、地點排序餐廳
 
 ### Installation
 
