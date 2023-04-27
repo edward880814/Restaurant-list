@@ -1,15 +1,12 @@
-//! require express
 const express = require("express");
 const session = require('express-session');
-
-// - require express-handlebars
 const exphbs = require("express-handlebars");
-//- require bodyparser
 const bodyParser = require("body-parser");
-//- require method-override
 const methodOverride = require("method-override");
 //! require index router
 const router = require("./routes/index");
+
+const usePassport = require('./config/passport')
 //! connect to db
 require("./config/mongoose");
 
@@ -42,6 +39,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //! method-override middleware
 app.use(methodOverride("_method"));
 
+usePassport(app)
 
 //! router middleware
 app.use(router);
