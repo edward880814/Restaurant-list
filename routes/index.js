@@ -5,12 +5,13 @@ const homeRoute = require("./modules/home");
 const restaurantRoute = require("./modules/restaurants");
 const searchRoute = require("./modules/search");
 const users = require('./modules/users')
+const { authenticator } = require('../middleware/auth')
 
-//- connect to modules route
-router.use("/", homeRoute);
-router.use("/restaurants", restaurantRoute);
-router.use("/search", searchRoute);
 router.use('/users', users)
+router.use("/", authenticator, homeRoute)
+router.use("/restaurants", authenticator, restaurantRoute)
+router.use("/search", authenticator, searchRoute)
+
 
 //! route for not found (undefined route)
 router.get("*", (req, res) => {
