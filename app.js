@@ -1,5 +1,6 @@
 //! require express
 const express = require("express");
+const session = require('express-session');
 // - require express-handlebars
 const exphbs = require("express-handlebars");
 //- require bodyparser
@@ -26,6 +27,12 @@ const hbs = exphbs({
 });
 app.engine("handlebars", hbs);
 app.set("view engine", "handlebars");
+
+app.use(session({
+  secret: 'ThisIsMySecret',
+  resave: false,
+  saveUninitialized: true
+}))
 
 //! load static files
 app.use(express.static("public"));
