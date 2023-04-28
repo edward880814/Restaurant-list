@@ -2,9 +2,6 @@
 
 A simple web application for managing your favorite restaurants
 
-![Previrew](https://github.com/yhhuangfrank/Restaurant-project-ver2/blob/main/public/image/preview-image.png)
-
-
 ## Features
 
 - 查看所有餐廳
@@ -20,30 +17,20 @@ A simple web application for managing your favorite restaurants
 1. 開啟終端機，將專案 clone 至本機電腦
 
 ```
-git clone https://github.com/yhhuangfrank/Restaurant-project-ver2.git
+git clone <url>
 ```
 
 2. 初始化
 
-```
-cd Restaurant-project // 進入專案資料夾
+
+cd filename // 進入專案資料夾
 npm install // 將所需的npm module安裝
-```
+
 3. 使用 `npm run seed` 新增種子資料
 
-4. 使用 `npm run start` 執行若出現下方訊息代表順利執行
+4. 使用 `npm run dev` 執行若出現下方訊息代表順利執行
 
 ```
 Server is listening to http://localhost:3000
 ```
 5. 網址列輸入 http://localhost:3000 開始使用
-
-### Built with
-
-- [Node.js @18.12.1](https://nodejs.org/zh-tw/download/) -Environment
-- [Express @4.16.4](https://www.npmjs.com/package/express) - Web framework
-- [Express-handlebars @3.0.0](https://www.npmjs.com/package/express-handlebars) - Template engine
-- [Bootstrap 5.2](https://getbootstrap.com/)
-- [Font-awesome 5.8.1](https://getbootstrap.com/)
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Mongoose @5.9.7](https://www.npmjs.com/package/mongoose) - ODM
