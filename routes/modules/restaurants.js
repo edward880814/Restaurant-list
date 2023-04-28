@@ -22,7 +22,8 @@ router.get("/new", (req, res) => {
 });
 //- 接收新增餐廳請求
 router.post("/", (req, res) => {
-  const restaurant = req.body;
+  const userId = req.user._id
+  const restaurant = req.body
   const {
     name,
     name_en,
@@ -53,15 +54,17 @@ router.post("/", (req, res) => {
     google_map,
     rating,
     description,
+    userId//這樣子建立資料後就會綁定userId了
   })
     .then(() => res.redirect("/"))
     .catch((err) => console.log(err));
 });
 
 router.get("/:_id", (req, res) => {
+  const userId = req.user._id
   const { _id } = req.params;
   //- 透過id查詢導向對應餐廳資料，將查詢結果傳回給show頁面
-  return Restaurant.findById(_id)
+  return Restaurant.findOne({ _id, userId })
     .lean()
     .then((restaurant) => res.render("show", { restaurant }))
     .catch((err) => console.log(err));
@@ -69,8 +72,9 @@ router.get("/:_id", (req, res) => {
 
 //- 導向修改頁面
 router.get("/:_id/edit", (req, res) => {
+  const userId = req.user._id
   const { _id } = req.params;
-  return Restaurant.findById(_id)
+  return Restaurant.findOne({ _id, userId })
     .lean()
     .then((restaurant) => {
       return Restaurant.find({}, { _id: 0, category: 1 })
@@ -87,8 +91,10 @@ router.get("/:_id/edit", (req, res) => {
     })
     .catch((err) => console.log(err));
 });
+
 //- 接收修改請求(使用method-override修改為put請求)
 router.put("/:_id", (req, res) => {
+  const userId = req.user._id
   const { _id } = req.params;
   const restaurant = req.body;
   //- check form input
@@ -100,7 +106,7 @@ router.put("/:_id", (req, res) => {
       _id,
     });
   }
-  return Restaurant.findById(_id)
+  return Restaurant.findOne({ _id, userId })
     .then((restaurant) => {
       //- 取得資料後修改並儲存
       for (const prop in req.body) {
@@ -114,9 +120,10 @@ router.put("/:_id", (req, res) => {
 
 //- 接收delete請求(使用method-override修改為delete請求)
 router.delete("/:_id", (req, res) => {
+  const userId = req.user._id
   const { _id } = req.params;
   return (
-    Restaurant.findById(_id)
+    Restaurant.findOne({ _id, userId })
       //- 找到對應資料並刪除，重新導向
       .then((restaurant) => restaurant.remove())
       .then(() => res.redirect("/"))

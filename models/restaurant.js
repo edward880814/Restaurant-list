@@ -42,6 +42,12 @@ const RestaurantSchema = new Schema({
     type: String,
     required: true,
   },
+  userId: {  // 加入關聯設定
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    index: true,
+    required: true
+  }
 });
 
 //- 匯出Restaurant model

@@ -5,9 +5,10 @@ const Restaurant = require("../../models/restaurant");
 
 //- home page
 router.get("/", (req, res) => {
-  //- 取出所有餐廳資料
-  return Restaurant.find()
+  const userId = req.user._id
+  Restaurant.find({ userId }) 
     .lean()
+    .sort({ _id: 'asc' })
     .then((restaurants) => res.render("index", { restaurants }))
     .catch((err) => console.log(err));
 });
