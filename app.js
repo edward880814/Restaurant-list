@@ -13,7 +13,7 @@ const usePassport = require('./config/passport')
 require("./config/mongoose");
 
 const app = express();
-const port = process.env.port
+const port = process.env.port || 3000
 
 //! template engine setting
 const hbs = exphbs({
